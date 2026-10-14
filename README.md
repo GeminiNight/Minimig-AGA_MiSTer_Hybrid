@@ -175,3 +175,8 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+## Amiga 060 Testing v0.1
+
+See [experiment instructions](amiga060/README.md) and [credits](CREDITS.md).
+This branch adds a separate historical-Hybrid CPU probe; FPGA logic is unchanged.
