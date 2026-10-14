@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+cd "${AMIGA060_FAT_ROOT:-/media/fat}/Minimig_Hybrid"
+cpu=$(cat cpu_model)
+case "$cpu" in m68020|m68030|m68040|m68060) ;; *) echo 'Invalid CPU model' >&2; exit 1;; esac
+printf '%s cpu=%s pid=%s\n' "$(date -u)" "$cpu" "$$" >> /tmp/amiga060_cpu.log
+exec 2>> /tmp/amiga060_cpu.log
+taskset -p 1 $$
+(cd kernel_patch && ./setup)
+# Historical setup does not propagate every failure; check its final prerequisites.
+test "$(cat /sys/kernel/config/device-tree/overlays/minimig/status)" = applied
+test -d /sys/module/minimig_irq
+LD_LIBRARY_PATH=./qemu/libs/lib/arm-linux-gnueabihf/ export LD_LIBRARY_PATH
+exec ./qemu/libs/lib/ld-linux-armhf.so.3 ./qemu/qemu-system-m68k --machine mister_minimig -cpu "$cpu" --nographic -D /tmp/qemu.log -m 10M -d int
